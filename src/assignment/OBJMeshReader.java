@@ -39,7 +39,7 @@ public class OBJMeshReader implements MeshReader {
 			
 			HashSet<Polygon> ans = new HashSet<Polygon>();		// create hash set of polygon
 			
-			while(fileReader.hasNextLine()) {						// while loop 1 : read vertices
+			while(fileReader.hasNextLine()) {						// while loop 2 : read faces
 				line = fileReader.nextLine();										// read a line from file
 				if(!facePattern.matcher(line).matches())			// if it does not match a face, then throw error
 					throw new WrongFileFormatException(	"Error in " + fileName + " at line " + 
