@@ -11,65 +11,70 @@ import java.util.regex.Pattern;
 public class OBJMeshReader implements MeshReader {
 
 	@Override
-	public HashSet<Polygon> read(String fileName) throws WrongFileFormatException {
-		try {
-			Scanner fileReader = new Scanner(new File(fileName));				// canner to read file
-			
-			Pattern vertexPattern = Pattern.compile("v( +\\d+(\\.\\d+)?){3}");	// regex for vertex
-			Pattern facePattern = Pattern.compile("f( +\\d+(\\.\\d+)?){3}");	// regex for face
-			
-			String line;										// string to store line read from file
-			String[] lineTokens;								// string array to store tokenized line
-			int lineNumber = 1;									// line number (useful for error message)
-			
-			ArrayList<Vertex> vertices = new ArrayList<Vertex>();				// array of vertices
-			
-			while(fileReader.hasNextLine()) {						// while loop 1 : read vertices
-				line = fileReader.nextLine();										// read a line from file
-				if(!vertexPattern.matcher(line).matches())							// if it isn't a vertex, go read the faces
-					break;
-				lineTokens = line.split(" ");										// split the line
-				
-				vertices.add(new Vertex(	Double.parseDouble(lineTokens[1]),		// create the new vertex
-											Double.parseDouble(lineTokens[2]),
-											Double.parseDouble(lineTokens[3])));
-				
-				lineNumber++;
-			}
-			
-			HashSet<Polygon> ans = new HashSet<Polygon>();		// create hash set of polygon
-			
-			while(fileReader.hasNextLine()) {						// while loop 2 : read faces
-				line = fileReader.nextLine();										// read a line from file
-				if(!facePattern.matcher(line).matches())			// if it does not match a face, then throw error
-					throw new WrongFileFormatException(	"Error in " + fileName + " at line " + 
-														lineNumber + ", incorrect formatting");
-
-				lineTokens = line.split(" ");										// split the line
-				
-				LinkedHashSet<Vertex> polygonVertices = new LinkedHashSet<Vertex>();	// create new linked hash set of vertices (for the polygon)
-				for(int i = 1; i < lineTokens.length; i++) {			// loop through the tokenized line
-					int vertexIndex = Integer.parseInt(lineTokens[i]);
-					if(vertexIndex > vertices.size())					// check if vertex index in within bounds
-						throw new WrongFileFormatException(		"Error in " + fileName + " at line " + 
-																lineNumber + ", vertex index " + 
-																vertexIndex + " out of bounds");
-
-					Vertex polygonVertex = vertices.get(vertexIndex - 1);		// get vertex at vertexIndex
-					polygonVertices.add(new Vertex(	polygonVertex.x,			// copy the vertex to the linked hash set
-													polygonVertex.y,
-													polygonVertex.z));
-				}
-				ans.add(new Polygon(polygonVertices));	// add new polygon created from the set of vertices, to the set of polygons
-				
-				lineNumber++;
-			}
-			
-			return ans;
-
+	public HashSet<Polygon> read(String filename) throws WrongFileFormatException {
+		
+		Scanner fileReader;
+		try {			// attempt to open the file for reading, throw exception if it cannot be opened
+			fileReader = new Scanner(new File(filename));
 		} catch (FileNotFoundException e) {
-			throw new WrongFileFormatException("unable to read from file at path : " + fileName);
+			throw new WrongFileFormatException("Error: " + filename + " : cannot open file");
 		}
+		
+		ArrayList<String> lines = new ArrayList<String>();		// get all the lines of the file in a string array
+		while(fileReader.hasNext())
+			lines.add(fileReader.nextLine());
+		
+		Pattern vertexPattern = Pattern.compile("v( +\\d+(\\.\\d+)?){3}");	// regex for vertex
+		Pattern facePattern = Pattern.compile("f( +\\d+(\\.\\d+)?){3}");	// regex for face
+		
+		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();	// list to store all vertices
+		
+		int lineNumber = 0;
+		
+		for(; lineNumber < lines.size(); lineNumber++) {		// loop over lines of the string to get vertices
+			
+			if(!vertexPattern.matcher(lines.get(lineNumber)).matches())	// check if the current line is a vertex
+				break;													// start checking faces if it isn't
+			
+			String[] lineTokens = lines.get(lineNumber).split(" ");
+			
+			allVertices.add(new Vertex(	Double.parseDouble(lineTokens[1]),		// create the new vertex
+										Double.parseDouble(lineTokens[2]),		// by getting coordinates
+										Double.parseDouble(lineTokens[3])));	// from the tokesized line
+		}
+		
+		HashSet<Polygon> ans = new HashSet<Polygon>();
+		
+		for(;lineNumber < lines.size(); lineNumber++) {
+			
+			if(!facePattern.matcher(lines.get(lineNumber)).matches())	// check if the line is a face, throw error if it's not
+				throw new WrongFileFormatException("Error: " + filename + " : line " + 
+													String.valueOf(lineNumber+1) +
+													" : incorrect format");
+			
+			String[] lineTokens = lines.get(lineNumber).split(" ");
+			
+			LinkedHashSet<Vertex> polygonVertices = new LinkedHashSet<Vertex>();
+			
+			for(int i = 1; i < lineTokens.length; i++) {					// loop through vertex indices in the face line
+				int vertexIndex = Integer.valueOf(lineTokens[i]) - 1;				// get vertex index
+				
+				if(vertexIndex > allVertices.size())
+					throw new WrongFileFormatException("Error: " + filename + " : line " + 
+														String.valueOf(lineNumber+1) +
+														" : vertex index out of bounds\n" +
+														"number of vertices = " + allVertices.size()
+														+ ", index = " + vertexIndex);
+				
+				polygonVertices.add(new Vertex(	allVertices.get(vertexIndex).x,		// copy the vertex to a linked hash set
+												allVertices.get(vertexIndex).y,		// of vertices, used to construct a polygon
+												allVertices.get(vertexIndex).z));
+			}
+			
+			ans.add(new Polygon(polygonVertices)); 			// make a new polygon and add it to the hash set of polygons
+		}
+		
+		return ans;
 	}
 
 }
