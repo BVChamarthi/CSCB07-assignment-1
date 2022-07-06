@@ -13,6 +13,8 @@ public class OBJMeshReader implements MeshReader {
 	@Override
 	public HashSet<Polygon> read(String filename) throws WrongFileFormatException {
 		
+		// READ FROM FILE AND STORE THE LINES IN A STRING ARRAY
+		
 		Scanner fileReader;
 		try {			// attempt to open the file for reading, throw exception if it cannot be opened
 			fileReader = new Scanner(new File(filename));
@@ -24,12 +26,17 @@ public class OBJMeshReader implements MeshReader {
 		while(fileReader.hasNext())
 			lines.add(fileReader.nextLine());
 		
+		// SET UP FOR READING LINES OF FILE
+		
 		Pattern vertexPattern = Pattern.compile("v( +\\d+(\\.\\d+)?){3}");	// regex for vertex
 		Pattern facePattern = Pattern.compile("f( +\\d+(\\.\\d+)?){3}");	// regex for face
 		
-		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();	// list to store all vertices
+		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();
+		HashSet<Polygon> ans = new HashSet<Polygon>();
 		
 		int lineNumber = 0;
+		
+		// READ VERTICES
 		
 		for(; lineNumber < lines.size(); lineNumber++) {		// loop over lines of the string to get vertices
 			
@@ -43,14 +50,14 @@ public class OBJMeshReader implements MeshReader {
 										Double.parseDouble(lineTokens[3])));	// from the tokesized line
 		}
 		
-		HashSet<Polygon> ans = new HashSet<Polygon>();
+		// READ POLYGONS
 		
 		for(;lineNumber < lines.size(); lineNumber++) {
 			
 			if(!facePattern.matcher(lines.get(lineNumber)).matches())	// check if the line is a face, throw error if it's not
-				throw new WrongFileFormatException("Error: " + filename + " : line " + 
-													String.valueOf(lineNumber+1) +
-													" : incorrect format");
+				throw new WrongFileFormatException("Error: " + filename + " : line "
+													+ String.valueOf(lineNumber+1)
+													+ " : incorrect format");
 			
 			String[] lineTokens = lines.get(lineNumber).split(" ");
 			
@@ -60,10 +67,10 @@ public class OBJMeshReader implements MeshReader {
 				int vertexIndex = Integer.valueOf(lineTokens[i]) - 1;				// get vertex index
 				
 				if(vertexIndex > allVertices.size())
-					throw new WrongFileFormatException("Error: " + filename + " : line " + 
-														String.valueOf(lineNumber+1) +
-														" : vertex index out of bounds\n" +
-														"number of vertices = " + allVertices.size()
+					throw new WrongFileFormatException("Error: " + filename + " : line "
+														+ String.valueOf(lineNumber+1)
+														+ " : vertex index out of bounds\n"
+														+ "number of vertices = " + allVertices.size()
 														+ ", index = " + vertexIndex);
 				
 				polygonVertices.add(new Vertex(	allVertices.get(vertexIndex).x,		// copy the vertex to a linked hash set
