@@ -25,11 +25,9 @@ public class PLYMeshWriter implements MeshWriter {
 		
 		LinkedHashSet<Vertex> allVertices = new LinkedHashSet<Vertex>();
 		
-		for(Polygon polygon : polygons) {
-			for(Vertex vertex : polygon.vertices) {
+		for(Polygon polygon : polygons)
+			for(Vertex vertex : polygon.vertices)
 				allVertices.add(vertex);
-			}
-		}
 				
 		ArrayList<Vertex> verticesList = new ArrayList<Vertex>(allVertices);
 				
@@ -39,9 +37,9 @@ public class PLYMeshWriter implements MeshWriter {
 				
 		for(Polygon polygon : polygons) {
 			String polygonReference = String.valueOf(polygon.vertices.size());
-			for(Vertex vertex : polygon.vertices) {
+			for(Vertex vertex : polygon.vertices)
 				polygonReference = polygonReference + String.valueOf(verticesList.indexOf(vertex));
-			}
+
 			polygonReferences.add(polygonReference);
 		}
 		
@@ -58,15 +56,14 @@ public class PLYMeshWriter implements MeshWriter {
 				
 		// WRITE VERTICES ARRAY TO FILE
 				
-		for(Vertex vertex : verticesList) {
+		for(Vertex vertex : verticesList)
 			fileWriter.write(vertex.toString() + "\n");
-		}
 				
 		// WRITE POLYGONS ARRAY TO FILE
 				
-		for(int i = 0; i < polygonReferences.size() - 1; i++) {
+		for(int i = 0; i < polygonReferences.size() - 1; i++)
 			fileWriter.write(polygonReferences.get(i) + "\n");
-		}
+
 		fileWriter.write(polygonReferences.get(polygonReferences.size() - 1) + "\n");
 				
 		fileWriter.close();
