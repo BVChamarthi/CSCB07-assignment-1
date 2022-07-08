@@ -1,5 +1,6 @@
 package assignment;
 
+import java.text.DecimalFormat;
 import java.util.Objects;
 
 public class Vertex extends GraphicalObject{
@@ -46,7 +47,9 @@ public class Vertex extends GraphicalObject{
 	}
 	@Override
 	public String toString() {
-		return x + " " + y + " " + z;
+		DecimalFormat df = new DecimalFormat("0.0");
+		df.setMaximumFractionDigits(6);
+		return df.format(x) + " " + df.format(y) + " " + df.format(z);
 	}
 	
 	

@@ -10,16 +10,10 @@ import java.util.LinkedHashSet;
 public class PLYMeshWriter implements MeshWriter {
 
 	@Override
-	public void write(HashSet<Polygon> polygons, String filename) throws WrongFileFormatException, IOException {
+	public void write(HashSet<Polygon> polygons, String filename) throws IOException {
 		// OPEN FILE FOR WRITING
 		
-		FileWriter fileWriter;
-		try {
-			fileWriter = new FileWriter(new File(filename));
-		} catch (IOException e) {
-			throw new WrongFileFormatException("Error: OBJMeshWriter : " + filename
-												+ "cannot be openned for writing");
-		}
+		FileWriter fileWriter = new FileWriter(new File(filename));
 		
 		// CONSTRUCT VERTICES ARRAY
 		
@@ -38,21 +32,21 @@ public class PLYMeshWriter implements MeshWriter {
 		for(Polygon polygon : polygons) {
 			String polygonReference = String.valueOf(polygon.vertices.size());
 			for(Vertex vertex : polygon.vertices)
-				polygonReference = polygonReference + String.valueOf(verticesList.indexOf(vertex));
+				polygonReference = polygonReference + " " + String.valueOf(verticesList.indexOf(vertex));
 
 			polygonReferences.add(polygonReference);
 		}
 		
 		// WRITE HEADER
-		fileWriter.write("ply");
-		fileWriter.write("format ascii 1.0");
-		fileWriter.write("element vertex " + verticesList.size());
-		fileWriter.write("property int32 x");
-		fileWriter.write("property int32 y");
-		fileWriter.write("property int32 z");
-		fileWriter.write("element face " + polygons.size());
-		fileWriter.write("property list uint8 int32 vertex_indices");
-		fileWriter.write("end_header");
+		fileWriter.write("ply\n");
+		fileWriter.write("format ascii 1.0\n");
+		fileWriter.write("element vertex " + verticesList.size() + "\n");
+		fileWriter.write("property float32 x\n");
+		fileWriter.write("property float32 y\n");
+		fileWriter.write("property float32 z\n");
+		fileWriter.write("element face " + polygons.size() + "\n");
+		fileWriter.write("property list uint8 int32 vertex_indices\n");
+		fileWriter.write("end_header\n");
 				
 		// WRITE VERTICES ARRAY TO FILE
 				

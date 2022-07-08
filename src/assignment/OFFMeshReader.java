@@ -19,7 +19,7 @@ public class OFFMeshReader implements MeshReader {
 		try {			// attempt to open the file for reading, throw exception if it cannot be opened
 			fileReader = new Scanner(new File(filename));
 		} catch (FileNotFoundException e) {
-			throw new WrongFileFormatException("Error: " + filename + " : cannot open file");
+			throw new WrongFileFormatException("\nError: " + filename + " : cannot open file");
 		}
 		
 		ArrayList<String> lines = new ArrayList<String>();		// get all the lines of the file in a string array
@@ -33,7 +33,7 @@ public class OFFMeshReader implements MeshReader {
 		
 		if(!headerRegex1.matcher(lines.get(0)).matches() ||				// check header using regexes
 			!headerRegex2.matcher(lines.get(1)).matches())
-			throw new WrongFileFormatException("Error: " + filename + " : incorrect header format");
+			throw new WrongFileFormatException("\nError: " + filename + " : incorrect header format");
 		
 		String[] headerTokens = lines.get(1).split(" ");				// get info about number of vertices and polygons
 		int expectedVertices = Integer.valueOf(headerTokens[0]);
@@ -41,8 +41,8 @@ public class OFFMeshReader implements MeshReader {
 		
 		// SET UP FOR READING LINES OF FILE
 		
-		Pattern vertexPattern = Pattern.compile("\\d+(\\.\\d+)?( +\\d+(\\.\\d+)?){2}");	// regex for vertex
-		Pattern facePattern = Pattern.compile("\\d+( +\\d+)+");							// regex for face
+		Pattern vertexPattern = Pattern.compile("-?\\d+(\\.\\d+)?( +-?\\d+(\\.\\d+)?){2} *");	// regex for vertex
+		Pattern facePattern = Pattern.compile("\\d+( +\\d+)+ *");							// regex for face
 		
 		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();
 		HashSet<Polygon> ans = new HashSet<Polygon>();
@@ -64,7 +64,7 @@ public class OFFMeshReader implements MeshReader {
 		}
 		
 		if(allVertices.size() != expectedVertices)	// check if actual number of vertices is same as expected number from header
-			throw new WrongFileFormatException("Error: " + filename
+			throw new WrongFileFormatException("\nError: " + filename
 												+ " : discrepency in total number of vertices\n"
 												+ "expected = " + expectedVertices
 												+ ", actual = " + allVertices.size());
@@ -74,9 +74,10 @@ public class OFFMeshReader implements MeshReader {
 		for(;lineNumber < lines.size(); lineNumber++) {
 			
 			if(!facePattern.matcher(lines.get(lineNumber)).matches())	// check if the line is a face, throw error if it's not
-				throw new WrongFileFormatException("Error: " + filename + " : line "
+				throw new WrongFileFormatException("\nError: " + filename + " : line "
 													+ String.valueOf(lineNumber+1)
-													+ " : incorrect format");
+													+ " '" + lines.get(lineNumber)
+													+ "' : incorrect format");
 			
 			String[] lineTokens = lines.get(lineNumber).split(" ");
 			int expectedPolygonVertices = Integer.valueOf(lineTokens[0]);
@@ -86,11 +87,12 @@ public class OFFMeshReader implements MeshReader {
 				int vertexIndex = Integer.valueOf(lineTokens[i]);				// get vertex index
 				
 				if(vertexIndex > allVertices.size())
-					throw new WrongFileFormatException("Error: " + filename + " : line "
+					throw new WrongFileFormatException("\nError: " + filename + " : line "
 														+ String.valueOf(lineNumber+1)
-														+ " : vertex index out of bounds\n"
-														+ "number of vertices = " + allVertices.size()
-														+ ", index = " + vertexIndex);
+														+ " '" + lines.get(lineNumber)
+														+ "' : vertex index out of bounds\n"
+														+ "number of vertices = " 
+														+ allVertices.size());
 				
 				polygonVertices.add(new Vertex(	allVertices.get(vertexIndex).x,		// copy the vertex to a linked hash set
 												allVertices.get(vertexIndex).y,		// of vertices, used to construct a polygon
@@ -98,8 +100,10 @@ public class OFFMeshReader implements MeshReader {
 			}
 			
 			if(polygonVertices.size() != expectedPolygonVertices)
-				throw new WrongFileFormatException("Error: " + filename + " : line " + lineNumber
-													+ " : discrepency in number of vertices\n"
+				throw new WrongFileFormatException("\nError: " + filename + " : line " 
+													+ String.valueOf(lineNumber+1)
+													+ " '" + lines.get(lineNumber)
+													+ "' : discrepency in number of vertices\n"
 													+ "expected = " + expectedPolygonVertices
 													+ ", actual = " + polygonVertices.size());
 			

@@ -10,17 +10,11 @@ import java.util.LinkedHashSet;
 public class OBJMeshWriter implements MeshWriter {
 
 	@Override
-	public void write(HashSet<Polygon> polygons, String filename) throws WrongFileFormatException, IOException {
+	public void write(HashSet<Polygon> polygons, String filename) throws IOException {
 		
 		// OPEN FILE FOR WRITING
 		
-		FileWriter fileWriter;
-		try {
-			fileWriter = new FileWriter(new File(filename));
-		} catch (IOException e) {
-			throw new WrongFileFormatException("Error: OBJMeshWriter : " + filename 
-												+ "cannot be openned for writing");
-		}
+		FileWriter fileWriter = new FileWriter(new File(filename));
 		
 		// CONSTRUCT VERTICES ARRAY
 		

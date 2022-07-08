@@ -19,7 +19,7 @@ public class PLYMeshReader implements MeshReader {
 		try {					// attempt to open the file for reading, throw exception if it cannot be opened
 			fileReader = new Scanner(new File(filename));
 		} catch (FileNotFoundException e) {
-			throw new WrongFileFormatException("Error: " + filename + " : cannot open file");
+			throw new WrongFileFormatException("\nError: " + filename + " : cannot open file");
 		}
 		
 		ArrayList<String> lines = new ArrayList<String>();	// get all the lines of the file in a string array
@@ -43,22 +43,23 @@ public class PLYMeshReader implements MeshReader {
 		int lineNumber = 0;
 		for(; lineNumber < headerRegexes.length && lineNumber < lines.size(); lineNumber++) {	// check the formatting of the header
 			if(!headerRegexes[lineNumber].matcher(lines.get(lineNumber)).matches())
-				throw new WrongFileFormatException("Error: " + filename + " : line " + 
-													String.valueOf(lineNumber+1) +
-													" : incorrect format");
+				throw new WrongFileFormatException("\nError: " + filename + " : line "
+													+ String.valueOf(lineNumber+1)
+													+ " '" + lines.get(lineNumber)
+													+ "' : incorrect format");
 		}
 		if(lineNumber < headerRegexes.length)		// check if file ended before end of the header
-			throw new WrongFileFormatException("Error: " + filename + " : ended before completion of the header");
+			throw new WrongFileFormatException("\nError: " + filename + " : ended before completion of the header");
 		
-		String[] headerTokens = lines.get(2).split(" ");				// if code reached this point,
+/*		String[] headerTokens = lines.get(2).split(" ");				// if code reached this point,
 		int expectedVertices = Integer.valueOf(headerTokens[2]);		// we know the header is right.
 		headerTokens = lines.get(6).split(" ");							// get number of vertices and
-		int expectedPolygons = Integer.valueOf(headerTokens[2]);		// polygons from the header
+		int expectedPolygons = Integer.valueOf(headerTokens[2]);		// polygons from the header */
 		
 		// SET UP FOR READING LINES OF FILE
 		
-		Pattern vertexPattern = Pattern.compile("\\d+(\\.\\d+)?( +\\d+(\\.\\d+)?){2}");	// initialise regexes
-		Pattern facePattern = Pattern.compile("\\d+( +\\d+)+");							// for the vertices and faces
+		Pattern vertexPattern = Pattern.compile("-?\\d+(\\.\\d+)?( +-?\\d+(\\.\\d+)?){2} *");	// initialise regexes
+		Pattern facePattern = Pattern.compile("\\d+( +\\d+)+ *");							// for the vertices and faces
 		
 		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();
 		HashSet<Polygon> ans = new HashSet<Polygon>();
@@ -77,20 +78,21 @@ public class PLYMeshReader implements MeshReader {
 										Double.parseDouble(lineTokens[2])));	// from the tokesized line
 		}
 		
-		if(allVertices.size() != expectedVertices)	// check if actual number of vertices is same as expected number from header
-			throw new WrongFileFormatException("Error: " + filename
+/*		if(allVertices.size() != expectedVertices)	// check if actual number of vertices is same as expected number from header
+			throw new WrongFileFormatException("\nError: " + filename
 												+ " : discrepency in total number of vertices\n"
 												+ "expected = " + expectedVertices
-												+ ", actual = " + allVertices.size());
+												+ ", actual = " + allVertices.size()); */
 		
 		// READ POLYGONS
 		
 		for(;lineNumber < lines.size(); lineNumber++) {
 			
 			if(!facePattern.matcher(lines.get(lineNumber)).matches())	// check if the line is a face, throw error if it's not
-				throw new WrongFileFormatException("Error: " + filename + " : line " 
+				throw new WrongFileFormatException("\nError: " + filename + " : line " 
 													+ String.valueOf(lineNumber+1)
-													+ " : incorrect format" );
+													+ " '" + lines.get(lineNumber)
+													+ "' : incorrect format" );
 			
 			String[] lineTokens = lines.get(lineNumber).split(" ");
 			int expectedPolygonVertices = Integer.valueOf(lineTokens[0]);
@@ -100,11 +102,12 @@ public class PLYMeshReader implements MeshReader {
 				int vertexIndex = Integer.valueOf(lineTokens[i]);				// get vertex index
 				
 				if(vertexIndex > allVertices.size())
-					throw new WrongFileFormatException("Error: " + filename + " : line "
+					throw new WrongFileFormatException("\nError: " + filename + " : line "
 														+ String.valueOf(lineNumber+1)
-														+ " : vertex index out of bounds\n"
-														+ "number of vertices = " + allVertices.size()
-														+ ", index = " + vertexIndex);
+														+ " '" + lines.get(lineNumber)
+														+ "' : vertex index out of bounds\n"
+														+ "number of vertices = " 
+														+ allVertices.size());
 				
 				polygonVertices.add(new Vertex(	allVertices.get(vertexIndex).x,		// copy the vertex to a linked hash set
 												allVertices.get(vertexIndex).y,		// of vertices, used to construct a polygon
@@ -112,19 +115,21 @@ public class PLYMeshReader implements MeshReader {
 			}
 			
 			if(polygonVertices.size() != expectedPolygonVertices)
-				throw new WrongFileFormatException("Error: " + filename + " : line " + lineNumber
-													+ " : discrepency in number of vertices\n"
+				throw new WrongFileFormatException("\nError: " + filename + " : line " 
+													+ String.valueOf(lineNumber+1)
+													+ " '" + lines.get(lineNumber)
+													+ "' : discrepency in number of vertices\n"
 													+ "expected = " + expectedPolygonVertices
 													+ ", actual = " + polygonVertices.size());
 			
 			ans.add(new Polygon(polygonVertices)); 			// make a new polygon and add it to the hash set of polygons
 		}
 		
-		if(ans.size() != expectedPolygons)	// check if actual number of polygons is same as expected number from header
-			throw new WrongFileFormatException("Error: " + filename
-												+ " : discrepency in total number of vertices\n"
+/*		if(ans.size() != expectedPolygons)	// check if actual number of polygons is same as expected number from header
+			throw new WrongFileFormatException("\nError: " + filename
+												+ " : discrepency in total number of polygons\n"
 												+ "expected = " + expectedPolygons
-												+ ", actual = " + ans.size());
+												+ ", actual = " + ans.size()); */
 		
 		return ans;
 	}
