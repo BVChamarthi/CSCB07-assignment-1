@@ -83,7 +83,7 @@ public class OFFMeshReader implements MeshReader {
 			int expectedPolygonVertices = Integer.valueOf(lineTokens[0]);
 			LinkedHashSet<Vertex> polygonVertices = new LinkedHashSet<Vertex>();
 			
-			for(int i = 1; i < lineTokens.length; i++) {					// loop through vertex indices in the face line
+			for(int i = 1; i <= expectedPolygonVertices; i++) {					// loop through vertex indices in the face line
 				int vertexIndex = Integer.valueOf(lineTokens[i]);				// get vertex index
 				
 				if(vertexIndex > allVertices.size())
@@ -98,14 +98,6 @@ public class OFFMeshReader implements MeshReader {
 												allVertices.get(vertexIndex).y,		// of vertices, used to construct a polygon
 												allVertices.get(vertexIndex).z));
 			}
-			
-			if(polygonVertices.size() != expectedPolygonVertices)
-				throw new WrongFileFormatException("\nError: " + filename + " : line " 
-													+ String.valueOf(lineNumber+1)
-													+ " '" + lines.get(lineNumber)
-													+ "' : discrepency in number of vertices\n"
-													+ "expected = " + expectedPolygonVertices
-													+ ", actual = " + polygonVertices.size());
 			
 			ans.add(new Polygon(polygonVertices)); 			// make a new polygon and add it to the hash set of polygons
 		}

@@ -33,7 +33,7 @@ public class OBJMeshWriter implements MeshWriter {
 		for(Polygon polygon : polygons) {
 			String polygonReference = "";
 			for(Vertex vertex : polygon.vertices)
-				polygonReference = polygonReference + String.valueOf(verticesList.indexOf(vertex) + 1);
+				polygonReference = polygonReference + " " + String.valueOf(verticesList.indexOf(vertex) + 1);
 				
 			polygonReferences.add(polygonReference);
 		}
@@ -46,7 +46,7 @@ public class OBJMeshWriter implements MeshWriter {
 		// WRITE POLYGONS ARRAY TO FILE
 		
 		for(int i = 0; i < polygonReferences.size() - 1; i++)
-			fileWriter.write("f " + polygonReferences.get(i) + "\n");
+			fileWriter.write("f" + polygonReferences.get(i) + "\n");
 
 		fileWriter.write("f " + polygonReferences.get(polygonReferences.size() - 1) + "\n");
 		

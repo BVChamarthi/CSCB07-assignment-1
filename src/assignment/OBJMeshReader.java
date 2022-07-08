@@ -31,7 +31,7 @@ public class OBJMeshReader implements MeshReader {
 		// SET UP FOR READING LINES OF FILE
 		
 		Pattern vertexPattern = Pattern.compile("v( +-?\\d+(\\.\\d+)?){3} *");	// regex for vertex
-		Pattern facePattern = Pattern.compile("f( +\\d+(\\.\\d+)?){3} *");	// regex for face
+		Pattern facePattern = Pattern.compile("f( +\\d+){3} *");	// regex for face
 		
 		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();
 		HashSet<Polygon> ans = new HashSet<Polygon>();
@@ -67,9 +67,10 @@ public class OBJMeshReader implements MeshReader {
 			LinkedHashSet<Vertex> polygonVertices = new LinkedHashSet<Vertex>();
 			
 			for(int i = 1; i < lineTokens.length; i++) {					// loop through vertex indices in the face line
+				if(lineTokens[i] == "") continue;
 				int vertexIndex = Integer.valueOf(lineTokens[i]) - 1;				// get vertex index
 				
-				if(vertexIndex > allVertices.size())
+				if(vertexIndex >= allVertices.size())
 					throw new WrongFileFormatException("\nError: " + filename + " : line "
 														+ String.valueOf(lineNumber+1)
 														+ " '" + lines.get(lineNumber)

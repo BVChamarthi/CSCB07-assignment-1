@@ -51,10 +51,10 @@ public class PLYMeshReader implements MeshReader {
 		if(lineNumber < headerRegexes.length)		// check if file ended before end of the header
 			throw new WrongFileFormatException("\nError: " + filename + " : ended before completion of the header");
 		
-/*		String[] headerTokens = lines.get(2).split(" ");				// if code reached this point,
+		String[] headerTokens = lines.get(2).split(" ");				// if code reached this point,
 		int expectedVertices = Integer.valueOf(headerTokens[2]);		// we know the header is right.
 		headerTokens = lines.get(6).split(" ");							// get number of vertices and
-		int expectedPolygons = Integer.valueOf(headerTokens[2]);		// polygons from the header */
+		int expectedPolygons = Integer.valueOf(headerTokens[2]);		// polygons from the header
 		
 		// SET UP FOR READING LINES OF FILE
 		
@@ -78,11 +78,11 @@ public class PLYMeshReader implements MeshReader {
 										Double.parseDouble(lineTokens[2])));	// from the tokesized line
 		}
 		
-/*		if(allVertices.size() != expectedVertices)	// check if actual number of vertices is same as expected number from header
+		if(allVertices.size() != expectedVertices)	// check if actual number of vertices is same as expected number from header
 			throw new WrongFileFormatException("\nError: " + filename
 												+ " : discrepency in total number of vertices\n"
 												+ "expected = " + expectedVertices
-												+ ", actual = " + allVertices.size()); */
+												+ ", actual = " + allVertices.size());
 		
 		// READ POLYGONS
 		
@@ -125,11 +125,11 @@ public class PLYMeshReader implements MeshReader {
 			ans.add(new Polygon(polygonVertices)); 			// make a new polygon and add it to the hash set of polygons
 		}
 		
-/*		if(ans.size() != expectedPolygons)	// check if actual number of polygons is same as expected number from header
+		if(ans.size() != expectedPolygons)	// check if actual number of polygons is same as expected number from header
 			throw new WrongFileFormatException("\nError: " + filename
 												+ " : discrepency in total number of polygons\n"
 												+ "expected = " + expectedPolygons
-												+ ", actual = " + ans.size()); */
+												+ ", actual = " + ans.size());
 		
 		return ans;
 	}

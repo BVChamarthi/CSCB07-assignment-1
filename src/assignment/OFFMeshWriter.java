@@ -33,14 +33,14 @@ public class OFFMeshWriter implements MeshWriter {
 		for(Polygon polygon : polygons) {
 			String polygonReference = String.valueOf(polygon.vertices.size());
 			for(Vertex vertex : polygon.vertices)
-				polygonReference = polygonReference + String.valueOf(verticesList.indexOf(vertex));
+				polygonReference = polygonReference + " " + String.valueOf(verticesList.indexOf(vertex));
 			
 			polygonReferences.add(polygonReference);
 		}
 		
 		// WRITE HEADER
-		fileWriter.write("OFF");
-		fileWriter.write(String.valueOf(verticesList.size()) + polygons.size() + " 0");
+		fileWriter.write("OFF\n");
+		fileWriter.write(String.valueOf(verticesList.size()) + " " + polygons.size() + " 0\n");
 						
 		// WRITE VERTICES ARRAY TO FILE
 						
@@ -52,7 +52,7 @@ public class OFFMeshWriter implements MeshWriter {
 		for(int i = 0; i < polygonReferences.size() - 1; i++)
 			fileWriter.write(polygonReferences.get(i) + " 220 220 220\n");
 
-		fileWriter.write(polygonReferences.get(polygonReferences.size() - 1) + "220 220 220\n");
+		fileWriter.write(polygonReferences.get(polygonReferences.size() - 1) + " 220 220 220\n");
 						
 		fileWriter.close();
 	}
