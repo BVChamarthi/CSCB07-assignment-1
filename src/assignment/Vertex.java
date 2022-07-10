@@ -4,15 +4,20 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 
 public class Vertex extends GraphicalObject{
-	double x;
-	double y;
-	double z;
+	public double x;
+	public double y;
+	public double z;
 	public Vertex(double x, double y, double z) {
 		super();
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
+	
+	boolean approxEquals(double a, double b) {				// check if the value is equal
+		return ((a-b) < 0.000001 && (a-b) > -0.000001);		// up to 6 decimal places
+	}
+	
 	@Override
 	public void transform(double[][] transformMatrix) {			// matrix vector multiplication
 		double newX = 	transformMatrix[0][0] * x +
@@ -43,7 +48,9 @@ public class Vertex extends GraphicalObject{
 		if (obj == null || !(obj instanceof Vertex))
 			return false;
 		Vertex other = (Vertex) obj;
-		return (x == other.x && y == other.y && z == other.z);
+		return (approxEquals(x, other.x) &&
+				approxEquals(y, other.y) &&
+				approxEquals(z, other.z));
 	}
 	@Override
 	public String toString() {

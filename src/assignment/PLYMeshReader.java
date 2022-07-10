@@ -78,12 +78,6 @@ public class PLYMeshReader implements MeshReader {
 										Double.parseDouble(lineTokens[2])));	// from the tokesized line
 		}
 		
-		if(allVertices.size() != expectedVertices)	// check if actual number of vertices is same as expected number from header
-			throw new WrongFileFormatException("\nError: " + filename
-												+ " : discrepency in total number of vertices\n"
-												+ "expected = " + expectedVertices
-												+ ", actual = " + allVertices.size());
-		
 		// READ POLYGONS
 		
 		for(;lineNumber < lines.size(); lineNumber++) {
@@ -101,7 +95,7 @@ public class PLYMeshReader implements MeshReader {
 			for(int i = 1; i < lineTokens.length; i++) {					// loop through vertex indices in the face line
 				int vertexIndex = Integer.valueOf(lineTokens[i]);				// get vertex index
 				
-				if(vertexIndex > allVertices.size())
+				if(vertexIndex >= allVertices.size())
 					throw new WrongFileFormatException("\nError: " + filename + " : line "
 														+ String.valueOf(lineNumber+1)
 														+ " '" + lines.get(lineNumber)
@@ -124,6 +118,12 @@ public class PLYMeshReader implements MeshReader {
 			
 			ans.add(new Polygon(polygonVertices)); 			// make a new polygon and add it to the hash set of polygons
 		}
+		
+		if(allVertices.size() != expectedVertices)	// check if actual number of vertices is same as expected number from header
+			throw new WrongFileFormatException("\nError: " + filename
+												+ " : discrepency in total number of vertices\n"
+												+ "expected = " + expectedVertices
+												+ ", actual = " + allVertices.size());
 		
 		if(ans.size() != expectedPolygons)	// check if actual number of polygons is same as expected number from header
 			throw new WrongFileFormatException("\nError: " + filename

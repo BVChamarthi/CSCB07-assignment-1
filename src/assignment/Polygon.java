@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Polygon extends GraphicalObject{
 
-	LinkedHashSet<Vertex> vertices;
+	public LinkedHashSet<Vertex> vertices;
 
 	public Polygon(LinkedHashSet<Vertex> vertices) {
 		super();
@@ -33,5 +33,14 @@ public class Polygon extends GraphicalObject{
 		return Objects.equals(vertices, other.vertices);
 	}
 
+	@Override
+	public String toString() {
+		String ans = "Polygon\n";
+		for(Vertex v : vertices) {
+			ans = ans + v.toString() + "\n";
+		}
+		
+		return ans;
+	}
 	
 }

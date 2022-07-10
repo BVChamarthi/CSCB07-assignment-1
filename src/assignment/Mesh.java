@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Mesh extends GraphicalObject {
 	
-	HashSet<Polygon> polygons;
+	public HashSet<Polygon> polygons;
 	MeshReader reader;
 	MeshWriter writer;
 
@@ -45,6 +45,16 @@ public class Mesh extends GraphicalObject {
 			return false;
 		Mesh other = (Mesh) obj;
 		return Objects.equals(polygons, other.polygons);
+	}
+	
+	@Override
+	public String toString() {
+		String ans = "Mesh :\n";
+		for(Polygon polygon : polygons) {
+			ans = ans + polygon.toString() + "\n";
+		}
+		
+		return ans;
 	}
 
 }
