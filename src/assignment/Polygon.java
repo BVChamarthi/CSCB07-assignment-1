@@ -33,7 +33,7 @@ public class Polygon extends GraphicalObject{
 		return Objects.equals(vertices, other.vertices);
 	}
 
-	@Override
+/*	@Override
 	public String toString() {
 		String ans = "Polygon\n";
 		for(Vertex v : vertices) {
@@ -41,6 +41,6 @@ public class Polygon extends GraphicalObject{
 		}
 		
 		return ans;
-	}
+	} */
 	
 }

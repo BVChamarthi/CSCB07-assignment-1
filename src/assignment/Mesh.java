@@ -47,7 +47,7 @@ public class Mesh extends GraphicalObject {
 		return Objects.equals(polygons, other.polygons);
 	}
 	
-	@Override
+/*	@Override
 	public String toString() {
 		String ans = "Mesh :\n";
 		for(Polygon polygon : polygons) {
@@ -55,6 +55,6 @@ public class Mesh extends GraphicalObject {
 		}
 		
 		return ans;
-	}
+	} */
 
 }

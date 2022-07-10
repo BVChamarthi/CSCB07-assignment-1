@@ -324,7 +324,7 @@ class testAssignment1 {
 		assertFalse(mesh.equals(v));
 	}
 	
-	@Test
+/*	@Test
 	void Mesh_toString() {
 		String expected = "Mesh :\n"
 				+ "Polygon\n"
@@ -338,7 +338,7 @@ class testAssignment1 {
 				+ "4.1 1.6 0.6\n"
 				+ "\n";
 		assertEquals(expectedSimpleMesh().toString(), expected);
-	}
+	}	*/
 	
 	// POLYGON
 	
