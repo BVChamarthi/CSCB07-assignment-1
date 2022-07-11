@@ -530,7 +530,6 @@ class testAssignment1 {
 	
 	@Test
 	void StringParse_makeObject() {
-		StringParse p = new StringParse();
 		ArrayList<String> strList = StringParse.parse("  v  1.1 2.2      3.3                 ");
 		String[] expectedArray = {"v", "1.1", "2.2", "3.3"};
 		ArrayList<String> expectedStrList = new ArrayList<String>(Arrays.asList(expectedArray));
@@ -539,7 +538,6 @@ class testAssignment1 {
 	
 	@Test
 	void Approx_makeObject() {
-		Approx a = new Approx();
 		int approxInt = Approx.makeInt(1.234567890);
 		assertEquals(approxInt, 1234568);
 	}
