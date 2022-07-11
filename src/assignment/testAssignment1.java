@@ -3,6 +3,8 @@ package assignment;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
@@ -400,7 +402,7 @@ class testAssignment1 {
 		assertEquals(v, expected);
 	}
 	
-	// TEST TRANSLATION OF SIMPLE MODEL BETWEEN FILE FORMATS
+	// TEST TRANSLATION OF SIMPLE MODEL BETWEEN FILE FORMATS (USED TO CHECK THE MESHWRITERS)
 	
 	@Test
 	void TranslateSimple_OBJtoPLY() throws WrongFileFormatException, IOException {
@@ -523,4 +525,23 @@ class testAssignment1 {
 		
 		assertTrue(simpleOBJ.equals(simpleOBJ));
 	}
+	
+	// TEST HELPER CLASSES
+	
+	@Test
+	void StringParse_makeObject() {
+		StringParse p = new StringParse();
+		ArrayList<String> strList = StringParse.parse("  v  1.1 2.2      3.3                 ");
+		String[] expectedArray = {"v", "1.1", "2.2", "3.3"};
+		ArrayList<String> expectedStrList = new ArrayList<String>(Arrays.asList(expectedArray));
+		assertEquals(strList, expectedStrList);
+	}
+	
+	@Test
+	void Approx_makeObject() {
+		Approx a = new Approx();
+		int approxInt = Approx.makeInt(1.234567890);
+		assertEquals(approxInt, 1234568);
+	}
+	
 }

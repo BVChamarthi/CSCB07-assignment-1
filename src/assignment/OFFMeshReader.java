@@ -35,14 +35,14 @@ public class OFFMeshReader implements MeshReader {
 			!headerRegex2.matcher(lines.get(1)).matches())
 			throw new WrongFileFormatException("\nError: " + filename + " : incorrect header format");
 		
-		String[] headerTokens = lines.get(1).split(" ");				// get info about number of vertices and polygons
-		int expectedVertices = Integer.valueOf(headerTokens[0]);
-		int expectedPolygons = Integer.valueOf(headerTokens[1]);
+		ArrayList<String> headerTokens = StringParse.parse(lines.get(1));				// get info about number of vertices and polygons
+		int expectedVertices = Integer.valueOf(headerTokens.get(0));
+		int expectedPolygons = Integer.valueOf(headerTokens.get(1));
 		
 		// SET UP FOR READING LINES OF FILE
 		
-		Pattern vertexPattern = Pattern.compile("-?\\d+(\\.\\d+)?( +-?\\d+(\\.\\d+)?){2} *");	// regex for vertex
-		Pattern facePattern = Pattern.compile("\\d+( +\\d+)+ *");							// regex for face
+		Pattern vertexPattern = Pattern.compile(" *-?\\d+(\\.\\d+)?( +-?\\d+(\\.\\d+)?){2} *");	// regex for vertex
+		Pattern facePattern = Pattern.compile(" *\\d+( +\\d+)+ *");							// regex for face
 		
 		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();
 		HashSet<Polygon> ans = new HashSet<Polygon>();
@@ -56,11 +56,11 @@ public class OFFMeshReader implements MeshReader {
 			if(!vertexPattern.matcher(lines.get(lineNumber)).matches())	// check if the current line is a vertex
 				break;													// start checking faces if it isn't
 			
-			String[] lineTokens = lines.get(lineNumber).split(" ");
+			ArrayList<String> lineTokens = StringParse.parse(lines.get(lineNumber));
 			
-			allVertices.add(new Vertex(	Double.parseDouble(lineTokens[0]),		// create the new vertex
-										Double.parseDouble(lineTokens[1]),		// by getting coordinates
-										Double.parseDouble(lineTokens[2])));	// from the tokesized line
+			allVertices.add(new Vertex(	Double.parseDouble(lineTokens.get(0)),		// create the new vertex
+										Double.parseDouble(lineTokens.get(1)),		// by getting coordinates
+										Double.parseDouble(lineTokens.get(2))));	// from the tokesized line
 		}
 		
 		// READ POLYGONS
@@ -73,12 +73,12 @@ public class OFFMeshReader implements MeshReader {
 													+ " '" + lines.get(lineNumber)
 													+ "' : incorrect format");
 			
-			String[] lineTokens = lines.get(lineNumber).split(" ");
-			int expectedPolygonVertices = Integer.valueOf(lineTokens[0]);
+			ArrayList<String> lineTokens = StringParse.parse(lines.get(lineNumber));
+			int expectedPolygonVertices = Integer.valueOf(lineTokens.get(0));
 			LinkedHashSet<Vertex> polygonVertices = new LinkedHashSet<Vertex>();
 			
 			for(int i = 1; i <= expectedPolygonVertices; i++) {					// loop through vertex indices in the face line
-				int vertexIndex = Integer.valueOf(lineTokens[i]);				// get vertex index
+				int vertexIndex = Integer.valueOf(lineTokens.get(i));				// get vertex index
 				
 				if(vertexIndex >= allVertices.size())
 					throw new WrongFileFormatException("\nError: " + filename + " : line "

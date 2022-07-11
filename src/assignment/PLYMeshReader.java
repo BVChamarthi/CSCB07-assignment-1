@@ -51,15 +51,15 @@ public class PLYMeshReader implements MeshReader {
 		if(lineNumber < headerRegexes.length)		// check if file ended before end of the header
 			throw new WrongFileFormatException("\nError: " + filename + " : ended before completion of the header");
 		
-		String[] headerTokens = lines.get(2).split(" ");				// if code reached this point,
-		int expectedVertices = Integer.valueOf(headerTokens[2]);		// we know the header is right.
-		headerTokens = lines.get(6).split(" ");							// get number of vertices and
-		int expectedPolygons = Integer.valueOf(headerTokens[2]);		// polygons from the header
+		ArrayList<String> headerTokens = StringParse.parse(lines.get(2));									// get number of vertices from header
+		int expectedVertices = Integer.valueOf(headerTokens.get(2));										
+		headerTokens = StringParse.parse(lines.get(6));														// get number of polygons from header
+		int expectedPolygons = Integer.valueOf(headerTokens.get(2));		
 		
 		// SET UP FOR READING LINES OF FILE
 		
-		Pattern vertexPattern = Pattern.compile("-?\\d+(\\.\\d+)?( +-?\\d+(\\.\\d+)?){2} *");	// initialise regexes
-		Pattern facePattern = Pattern.compile("\\d+( +\\d+)+ *");							// for the vertices and faces
+		Pattern vertexPattern = Pattern.compile(" *-?\\d+(\\.\\d+)?( +-?\\d+(\\.\\d+)?){2} *");	// initialise regexes
+		Pattern facePattern = Pattern.compile(" *\\d+( +\\d+)+ *");							// for the vertices and faces
 		
 		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();
 		HashSet<Polygon> ans = new HashSet<Polygon>();
@@ -71,11 +71,11 @@ public class PLYMeshReader implements MeshReader {
 			if(!vertexPattern.matcher(lines.get(lineNumber)).matches())	// check if the current line is a vertex
 				break;													// start checking faces if it isn't
 			
-			String[] lineTokens = lines.get(lineNumber).split(" ");
+			ArrayList<String> lineTokens = StringParse.parse(lines.get(lineNumber));
 			
-			allVertices.add(new Vertex(	Double.parseDouble(lineTokens[0]),		// create the new vertex
-										Double.parseDouble(lineTokens[1]),		// by getting coordinates
-										Double.parseDouble(lineTokens[2])));	// from the tokesized line
+			allVertices.add(new Vertex(	Double.parseDouble(lineTokens.get(0)),		// create the new vertex
+										Double.parseDouble(lineTokens.get(1)),		// by getting coordinates
+										Double.parseDouble(lineTokens.get(2))));	// from the tokesized line
 		}
 		
 		// READ POLYGONS
@@ -88,12 +88,12 @@ public class PLYMeshReader implements MeshReader {
 													+ " '" + lines.get(lineNumber)
 													+ "' : incorrect format" );
 			
-			String[] lineTokens = lines.get(lineNumber).split(" ");
-			int expectedPolygonVertices = Integer.valueOf(lineTokens[0]);
+			ArrayList<String> lineTokens = StringParse.parse(lines.get(lineNumber));
+			int expectedPolygonVertices = Integer.valueOf(lineTokens.get(0));
 			LinkedHashSet<Vertex> polygonVertices = new LinkedHashSet<Vertex>();
 			
-			for(int i = 1; i < lineTokens.length; i++) {					// loop through vertex indices in the face line
-				int vertexIndex = Integer.valueOf(lineTokens[i]);				// get vertex index
+			for(int i = 1; i < lineTokens.size(); i++) {					// loop through vertex indices in the face line
+				int vertexIndex = Integer.valueOf(lineTokens.get(i));				// get vertex index
 				
 				if(vertexIndex >= allVertices.size())
 					throw new WrongFileFormatException("\nError: " + filename + " : line "

@@ -1,7 +1,6 @@
 package assignment;
 
 import java.text.DecimalFormat;
-import java.util.Objects;
 
 public class Vertex extends GraphicalObject{
 	public double x;
@@ -12,10 +11,6 @@ public class Vertex extends GraphicalObject{
 		this.x = x;
 		this.y = y;
 		this.z = z;
-	}
-	
-	boolean approxEquals(double a, double b) {				// check if the value is equal
-		return ((a-b) < 0.000001 && (a-b) > -0.000001);		// up to 6 decimal places
 	}
 	
 	@Override
@@ -39,7 +34,8 @@ public class Vertex extends GraphicalObject{
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(x, y, z);
+		//return Objects.hash(x, y, z);
+		return Approx.makeInt(z);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -48,15 +44,13 @@ public class Vertex extends GraphicalObject{
 		if (obj == null || !(obj instanceof Vertex))
 			return false;
 		Vertex other = (Vertex) obj;
-		return (approxEquals(x, other.x) &&
-				approxEquals(y, other.y) &&
-				approxEquals(z, other.z));
+		return (Approx.equals(x, other.x) && Approx.equals(y, other.y) && Approx.equals(z, other.z));
 	}
 	@Override
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("0.0");
 		df.setMaximumFractionDigits(6);
-		return df.format(x) + " " + df.format(y) + " " + df.format(z);
+		return df.format(Approx.makeInt(x) / 1000000.0) + " " + df.format(Approx.makeInt(y) / 1000000.0) + " " + df.format(Approx.makeInt(z) / 1000000.0);
 	}
 	
 	

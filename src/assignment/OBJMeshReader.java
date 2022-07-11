@@ -30,8 +30,8 @@ public class OBJMeshReader implements MeshReader {
 		
 		// SET UP FOR READING LINES OF FILE
 		
-		Pattern vertexPattern = Pattern.compile("v( +-?\\d+(\\.\\d+)?){3} *");	// regex for vertex
-		Pattern facePattern = Pattern.compile("f( +\\d+){3} *");	// regex for face
+		Pattern vertexPattern = Pattern.compile(" *v( +-?\\d+(\\.\\d+)?){3} *");	// regex for vertex
+		Pattern facePattern = Pattern.compile(" *f( +\\d+){3} *");	// regex for face
 		
 		ArrayList<Vertex> allVertices = new ArrayList<Vertex>();
 		HashSet<Polygon> ans = new HashSet<Polygon>();
@@ -45,11 +45,11 @@ public class OBJMeshReader implements MeshReader {
 			if(!vertexPattern.matcher(lines.get(lineNumber)).matches())	// check if the current line is a vertex
 				break;													// start checking faces if it isn't
 			
-			String[] lineTokens = lines.get(lineNumber).split(" ");
+			ArrayList<String> lineTokens = StringParse.parse(lines.get(lineNumber));
 			
-			allVertices.add(new Vertex(	Double.parseDouble(lineTokens[1]),		// create the new vertex
-										Double.parseDouble(lineTokens[2]),		// by getting coordinates
-										Double.parseDouble(lineTokens[3])));	// from the tokesized line
+			allVertices.add(new Vertex(	Double.parseDouble(lineTokens.get(1)),		// create the new vertex
+										Double.parseDouble(lineTokens.get(2)),		// by getting coordinates
+										Double.parseDouble(lineTokens.get(3))));	// from the tokesized line
 		}
 		
 		// READ POLYGONS
@@ -62,13 +62,12 @@ public class OBJMeshReader implements MeshReader {
 													+ " '" + lines.get(lineNumber) 
 													+ "' : incorrect format");
 			
-			String[] lineTokens = lines.get(lineNumber).split(" ");
+			ArrayList<String> lineTokens = StringParse.parse(lines.get(lineNumber));
 			
 			LinkedHashSet<Vertex> polygonVertices = new LinkedHashSet<Vertex>();
 			
-			for(int i = 1; i < lineTokens.length; i++) {					// loop through vertex indices in the face line
-				if(lineTokens[i] == "") continue;
-				int vertexIndex = Integer.valueOf(lineTokens[i]) - 1;				// get vertex index
+			for(int i = 1; i < lineTokens.size(); i++) {					// loop through vertex indices in the face line
+				int vertexIndex = Integer.valueOf(lineTokens.get(i)) - 1;				// get vertex index
 				
 				if(vertexIndex >= allVertices.size())
 					throw new WrongFileFormatException("\nError: " + filename + " : line "
